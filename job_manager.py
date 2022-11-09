@@ -18,14 +18,15 @@ class JobManager:
 		self._job_queue = JobQueue(Config.get("thread_count"))
 		self._job_queue.start_threads()
 
-	def add_job (self, new_job: Job) -> None:
+	def add_job (self, new_job: Job) -> str:
 		"""
 		Add a new job to this job manager
 		:param new_job: The job to be added
-		:return: None
+		:return: The id of the job that was added
 		"""
 		if new_job.id not in self.jobs:
 			self.jobs[new_job.id] = new_job
+			return new_job.id
 		else:
 			raise IdAlreadyUsedException(f"Job ID {new_job.id} already used")
 

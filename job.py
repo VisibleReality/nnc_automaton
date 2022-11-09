@@ -9,7 +9,8 @@ from enum import Enum, auto
 
 
 class Job:
-	def __init__ (self, *, yt_url: str, speedup_factor: float, song_title: str, song_artist: str):
+	def __init__ (self, *,
+			yt_url: str = "", speedup_factor: float = 1.8225, song_title: str = "", song_artist: str = ""):
 		"""
 		Creates a new job with a randomly generated ID, and a default status of Waiting.
 		:param yt_url: The YouTube video to get audio from
@@ -59,10 +60,7 @@ class Job:
 		must be provided.
 		:return: True if job is ready, False otherwise
 		"""
-		return self.yt_url is not None and \
-			   self.speedup_factor is not None and \
-			   self.song_title is not None and \
-			   self.song_artist is not None and \
+		return self.yt_url and self.song_title and self.song_artist and self.speedup_factor and \
 			   pathlib.Path(self.get_image_location()).exists()
 
 	def run_job (self) -> None:
@@ -89,6 +87,9 @@ class Job:
 		:return: None
 		"""
 		raise NotImplementedError()
+
+	def __str__ (self):
+		return f"{self.id} ({self.song_title})"
 
 
 class JobStatus(Enum):
