@@ -72,12 +72,14 @@ class Job:
 		video_generation.generate_audio(yt_url = self.yt_url,
 										output_location = self.get_audio_location(),
 										speedup_factor = self.speedup_factor)
+
 		self.status = JobStatus.VideoProcessing
 		video_generation.generate_video(audio_location = self.get_audio_location(),
 										image_location = self.get_image_location(),
 										save_location = self.get_video_location(),
 										song_title = self.song_title,
 										song_artist = self.song_artist)
+
 		self.status = JobStatus.Done
 
 	def set_youtube_info (self, publish_time) -> None:

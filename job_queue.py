@@ -1,19 +1,26 @@
 import queue
 import threading
+from collections.abc import Collection
 
 from job import JobStatus, Job
 
 
 class JobQueue:
-	def __init__ (self, thread_count: int = 1):
+	def __init__ (self, thread_count: int = 1, starting_queue: Collection[Job] = None):
 		"""
 		Creates a new job queue, which manages the execution of jobs
 		:param thread_count: The amount of threads to create (default 1)
+		:param starting_queue: A collection of items to insert into the queue
 		"""
 		self._queue: queue.Queue[Job] = queue.Queue()
 
+		if starting_queue is not None:
+			for job in starting_queue:
+				self._queue.put(job)
+
 		# Initialise the given amount of threads
-		self._threads = [threading.Thread(target = self._thread_worker, args = [x]) for x in range(thread_count)]
+		self._threads = [threading.Thread(target = self._thread_worker, args = [x], daemon = True)
+						 for x in range(thread_count)]
 
 	def _thread_worker (self, thread_number: int) -> None:
 		print(f"Thread {thread_number} started")
@@ -42,6 +49,14 @@ class JobQueue:
 		"""
 		for thread in self._threads:
 			thread.start()
+
+	def get_queue_ids (self) -> list[str]:
+		"""
+		Get the current state of the queue
+		:return: A list containing the ids of all jobs in the queue, from first to last
+		(not including currently processing jobs)
+		"""
+		return [job.id for job in self._queue.queue]
 
 	def queue_job (self, new_job: Job) -> bool:
 		"""

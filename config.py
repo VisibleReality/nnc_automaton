@@ -15,7 +15,8 @@ class Config:
 		"savefile_ahk_script": r".\savefile.ahk",
 		"ffmpeg_location": r".\ffmpeg\bin\ffmpeg.exe",
 		"ffprobe_location": r".\ffmpeg\bin\ffprobe.exe",
-		"thread_count": 2
+		"thread_count": 2,
+		"savestate_file": r".\savestate.json"
 	}
 
 	_config_location = "./config.json"
