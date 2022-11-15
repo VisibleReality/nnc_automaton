@@ -93,6 +93,12 @@ class Job:
 	def __str__ (self):
 		return f"{self.id} ({self.song_title})"
 
+	def __eq__(self, other):
+		"""
+		Checks if the ids of the jobs are equal
+		"""
+		return self.id == other.id
+
 
 class JobStatus(Enum):
 	Waiting = auto()

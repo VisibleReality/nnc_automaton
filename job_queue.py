@@ -1,5 +1,6 @@
 import queue
 import threading
+from collections import deque
 from collections.abc import Collection
 
 from job import JobStatus, Job
@@ -72,3 +73,11 @@ class JobQueue:
 			return True
 		else:
 			return False
+
+	def delete_job (self, job: Job) -> None:
+		"""
+		Remove a job from the queue
+		:param job: The job to remove
+		:return: None
+		"""
+		self._queue.queue.remove(job)

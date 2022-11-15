@@ -1,5 +1,6 @@
 import atexit
-from typing import Collection, NamedTuple
+from typing import NamedTuple
+from collections.abc import Collection
 
 import jsonpickle
 
@@ -65,15 +66,28 @@ class JobManager:
 		"""
 		if job_id in self.jobs:
 			self.jobs[job_id].cleanup_files()
+			self.dequeue_job(job_id)
 			del self.jobs[job_id]
 			return True
 		else:
 			return False
 
-	def get_jobs_with_status (self, statuses: Collection[JobStatus]) -> dict[str, Job]:
+	def dequeue_job (self, job_id: str) -> bool:
+		"""
+		Remove a job from the queue
+		:param job_id: The id of the job to dequeue
+		:return: True if the job was in the queue, false otherwise
+		"""
+		if job_id in self._job_queue.get_queue_ids():
+			self._job_queue.delete_job(self.jobs[job_id])
+			return True
+		else:
+			return False
+
+	def get_jobs_with_status (self, *statuses: JobStatus) -> dict[str, Job]:
 		"""
 		Get all jobs with given status
-		:param statuses: Collection of statuses to return jobs with
+		:param statuses: One or more job statuses to get jobs with
 		:return: A dictionary containing only the jobs with the given statuses
 		"""
 		return {job_id: job for job_id, job in self.jobs.items() if job.status in statuses}
@@ -109,6 +123,7 @@ class JobManager:
 		save_state = JobManagerSave(jobs = self.jobs, queue = self._job_queue.get_queue_ids())
 		with open(Config.get("savestate_file"), "w") as save_file:
 			save_file.write(jsonpickle.encode(save_state))
+		print(f"Saved state to {Config.get('savestate_file')}")
 
 
 class JobManagerSave(NamedTuple):
