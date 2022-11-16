@@ -1,6 +1,6 @@
 import atexit
+import pathlib
 from typing import NamedTuple
-from collections.abc import Collection
 
 import jsonpickle
 
@@ -17,8 +17,8 @@ class JobManager:
 		:param load_state: Set to true to load state from disk
 		"""
 
-		# Load state from disk
-		if load_state:
+		# Load state from disk, if it exists
+		if load_state and pathlib.Path(Config.get("savestate_file")).exists():
 			with open(Config.get("savestate_file"), "r") as save_file:
 				save_state: JobManagerSave = jsonpickle.decode(save_file.read())
 
@@ -87,10 +87,13 @@ class JobManager:
 	def get_jobs_with_status (self, *statuses: JobStatus) -> dict[str, Job]:
 		"""
 		Get all jobs with given status
-		:param statuses: One or more job statuses to get jobs with
+		:param statuses: One or more job statuses to get jobs with. If no statues are specified, returns all jobs
 		:return: A dictionary containing only the jobs with the given statuses
 		"""
-		return {job_id: job for job_id, job in self.jobs.items() if job.status in statuses}
+		if len(statuses) != 0:
+			return {job_id: job for job_id, job in self.jobs.items() if job.status in statuses}
+		else:
+			return self.jobs
 
 	def queue_job (self, job_id: str) -> bool:
 		"""
