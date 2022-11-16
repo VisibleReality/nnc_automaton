@@ -30,19 +30,19 @@ class Job:
 		"""
 		:return: The absolute path to where the audio file should be located for this job
 		"""
-		return str(pathlib.Path.cwd().joinpath("data").joinpath(f"{self.id}-{self.song_title}.mp3"))
+		return str(pathlib.Path.cwd().joinpath("data").joinpath(f"{self.id}.mp3"))
 
 	def get_image_location (self) -> str:
 		"""
 		:return: The absolute path to where the image file should be located for this job
 		"""
-		return str(pathlib.Path.cwd().joinpath("data").joinpath(f"{self.id}-{self.song_title}.jpg"))
+		return str(pathlib.Path.cwd().joinpath("data").joinpath(f"{self.id}.jpg"))
 
 	def get_video_location (self) -> str:
 		"""
 		:return: The absolute path to where the video file should be saved for this job
 		"""
-		return str(pathlib.Path.cwd().joinpath("data").joinpath(f"{self.id}-{self.song_title}.mp4"))
+		return str(pathlib.Path.cwd().joinpath("data").joinpath(f"{self.id}.mp4"))
 
 	def cleanup_files (self) -> None:
 		"""
