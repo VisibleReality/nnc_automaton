@@ -6,3 +6,4 @@
 /ffmpeg/
 /venv/
 /.idea/
+/__pycache__/
