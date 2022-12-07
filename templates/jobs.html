@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Nightnightcore Automaton</title>
+	<link rel="stylesheet" href="{{ url_for('static', filename='bootstrap.min.css') }}">
+	<link rel="stylesheet" href="{{ url_for('static', filename='bootstrap-icons.css') }}">
+</head>
+<body>
+<nav class="navbar navbar-dark navbar-expand-md" style="background-color: #225f31">
+	<div class="container">
+		<a href="/" class="navbar-brand">
+			<img src="{{ url_for('static', filename='nightnightcore.png') }}" alt="Nightnightcore Automaton"
+				 class="rounded-circle" height="48">
+		</a>
+		<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar-collapse-section"
+				aria-controls="navbar-collapse-section" aria-expanded="false" aria-label="Toggle navigation">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+		<div class="collapse navbar-collapse" id="navbar-collapse-section">
+			<a href="/" class="navbar-brand">Nightnightcore Automaton</a>
+			<ul class="navbar-nav me-auto">
+				<li class="nav-item">
+					<a href="{{ url_for('list_jobs') }}" class="nav-link">Jobs ({{ job_counts["total"] }})</a>
+				</li>
+				<li class="nav-item">
+					<a href="{{ url_for('queue_status') }}" class="nav-link">
+						Queue ({{ job_counts["queued"] + job_counts["processing"] }})</a>
+				</li>
+			</ul>
+			<button onclick="save(this)" class="btn btn-outline-light ps-2 me-2">
+				<i class="bi bi-save" id="save-icon"></i> Save
+			</button>
+			<a href="{{ url_for('create_job') }}" class="btn btn-outline-light ps-2 me-2">
+				<i class="bi bi-plus"></i> New Job
+			</a>
+			<a href="{{ url_for('settings') }}" class="btn btn-outline-light">
+				<i class="bi bi-gear"></i> Settings
+			</a>
+		</div>
+	</div>
+</nav>
+<div class="container mt-2">
+	<div class="row g-3">
+		<div class="col-12 col-lg-3 order-lg-last">
+			Filter buttons
+		</div>
+		<div class="col-12 col-lg-9 order-lg-first">
+			{% for job in jobs.values() %}
+				<div class="card">
+					<div class="row g-0">
+						<div class="col-12 col-md-3 mh-100 rounded-start"
+							 style="background-image: url('{{ url_for('get_job_image', job_id = job.id) }}');
+									 background-size: cover">
+						</div>
+						<div class="col-12 col-md-9">
+							<div class="card-body">
+								<h5 class="card-title">{{ job.song_name if job._song_name else "(No name)" }}</h5>
+								<p class="card-text">{{ job.song_artist if job.song_artist else "(No artist)" }}</p>
+								<p class="card-text text-muted">id: {{ job.id }}</p>
+							</div>
+						</div>
+					</div>
+				</div>
+			{% endfor %}
+		</div>
+	</div>
+</div>
+<script src="{{ url_for('static', filename='bootstrap.bundle.min.js') }}"></script>
+<script src="{{ url_for('static', filename='misc.js') }}"></script>
+</body>
+</html>

@@ -14,25 +14,19 @@ job_manager = JobManager(True)
 
 
 # Start up a thread that saves the state every 30 minutes
-def save_timer ():
-	time.sleep(1800)
-	job_manager.save_state()
-
-
-threading.Thread(target = save_timer, daemon = True)
+# def save_timer ():
+# 	time.sleep(1800)
+# 	job_manager.save_state()
+#
+#
+# threading.Thread(target = save_timer, daemon = True)
 
 
 # -- MISC --
 
 @app.route("/")
 def main_page ():
-	job_counts = {"total":      len(job_manager.jobs),
-				  "waiting":    len(job_manager.get_jobs_with_status(JobStatus.Waiting)),
-				  "queued":     len(job_manager.get_jobs_with_status(JobStatus.Queued)),
-				  "processing": len(job_manager.get_jobs_with_status(JobStatus.AudioProcessing,
-																	 JobStatus.VideoProcessing)),
-				  "done":       len(job_manager.get_jobs_with_status(JobStatus.Done)),
-				  "failed":     len(job_manager.get_jobs_with_status(JobStatus.Failed))}
+	job_counts = job_manager.get_counts()
 
 	return render_template("index.html", job_counts = job_counts)
 
@@ -45,6 +39,12 @@ def settings ():
 @app.route("/favicon.ico")
 def favicon ():
 	return send_file("./nightnightcore.ico")
+
+
+@app.route("/save")
+def save ():
+	job_manager.save_state()
+	return "true"
 
 
 # -- JOBS --
@@ -64,19 +64,12 @@ def list_jobs ():
 				job_statues.extend((JobStatus.AudioProcessing, JobStatus.VideoProcessing))
 			elif job_type == "done":
 				job_statues.append(JobStatus.Done)
+			elif job_type == "uploaded":
+				job_statues.append(JobStatus.Uploaded)
 			elif job_type == "failed":
-				job_statues.append(JobStatus.Failed)
-			elif job_type == "deleted":
-				job_statues.append(JobStatus.Deleted)
+				job_statues.extend((JobStatus.Failed, JobStatus.Deleted))
 
-	job_counts = {"total":      len(job_manager.jobs),
-				  "waiting":    len(job_manager.get_jobs_with_status(JobStatus.Waiting)),
-				  "queued":     len(job_manager.get_jobs_with_status(JobStatus.Queued)),
-				  "processing": len(job_manager.get_jobs_with_status(JobStatus.AudioProcessing,
-																	 JobStatus.VideoProcessing)),
-				  "done":       len(job_manager.get_jobs_with_status(JobStatus.Done)),
-				  "failed":     len(job_manager.get_jobs_with_status(JobStatus.Failed)),
-				  "deleted":    len(job_manager.get_jobs_with_status(JobStatus.Deleted))}
+	job_counts = job_manager.get_counts()
 
 	jobs = job_manager.get_jobs_with_status(*job_statues)
 
@@ -87,6 +80,21 @@ def list_jobs ():
 def job_page (job_id: str):
 	job = job_manager.jobs[job_id]
 	return jsonpickle.encode(job)
+
+
+@app.route("/job/<job_id>/image")
+def get_job_image (job_id: str):
+	return send_file(job_manager.jobs[job_id].get_image_location())
+
+
+@app.route("/job/<job_id>/audio")
+def get_job_audio (job_id: str):
+	return send_file(job_manager.jobs[job_id].get_audio_location())
+
+
+@app.route("/job/<job_id>/video")
+def get_job_video (job_id: str):
+	return send_file(job_manager.jobs[job_id].get_video_location())
 
 
 @app.route("/new-job")

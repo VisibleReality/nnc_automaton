@@ -44,7 +44,9 @@ class JobManager:
 		atexit.register(self._exit_handler)
 
 	def _exit_handler (self):
-		self.save_state()
+		# When using the debug server don't autosave state
+		# self.save_state()
+		pass
 
 	def add_job (self, new_job: Job) -> str:
 		"""
@@ -127,6 +129,20 @@ class JobManager:
 		with open(Config.get("savestate_file"), "w") as save_file:
 			save_file.write(jsonpickle.encode(save_state))
 		print(f"Saved state to {Config.get('savestate_file')}")
+
+	def get_counts (self) -> dict[str, int]:
+		"""
+		Return a dictionary containing counts of each type of job. The categories are
+		:return:
+		"""
+		return {"total":      len(self.jobs),
+				"waiting":    len(self.get_jobs_with_status(JobStatus.Waiting)),
+				"queued":     len(self.get_jobs_with_status(JobStatus.Queued)),
+				"processing": len(self.get_jobs_with_status(JobStatus.AudioProcessing,
+																   JobStatus.VideoProcessing)),
+				"done":       len(self.get_jobs_with_status(JobStatus.Done)),
+				"uploaded":   len(self.get_jobs_with_status(JobStatus.Uploaded)),
+				"failed":     len(self.get_jobs_with_status(JobStatus.Failed, JobStatus.Deleted))}
 
 
 class JobManagerSave(NamedTuple):

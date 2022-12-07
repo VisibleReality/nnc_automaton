@@ -88,6 +88,7 @@ class Job:
 		:param publish_time: The time for the video to be published
 		:return: None
 		"""
+		self.status = JobStatus.Uploaded
 		raise NotImplementedError()
 
 	def __str__ (self):
@@ -106,5 +107,6 @@ class JobStatus(Enum):
 	AudioProcessing = auto()
 	VideoProcessing = auto()
 	Done = auto()
+	Uploaded = auto()
 	Deleted = auto()
 	Failed = auto()
