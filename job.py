@@ -82,14 +82,14 @@ class Job:
 
 		self.status = JobStatus.Done
 
-	def set_youtube_info (self, publish_time) -> None:
+	def set_youtube_info (self, publish_time) -> bool:
 		"""
 		Sets the video name, description, and publish time of the video on YouTube
 		:param publish_time: The time for the video to be published
 		:return: None
 		"""
 		self.status = JobStatus.Uploaded
-		raise NotImplementedError()
+		return False
 
 	def __str__ (self):
 		return f"{self.id} ({self.song_title})"

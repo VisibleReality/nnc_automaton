@@ -1,0 +1,30 @@
+<nav class="navbar navbar-dark navbar-expand-lg" style="background-color: #225f31">
+	<div class="container">
+		<a href="/" class="navbar-brand">
+			<img src="{{ url_for('static', filename='nightnightcore.png') }}" alt="Nightnightcore Automaton"
+					 class="rounded-circle" height="48">
+		</a>
+		<a href="/" class="navbar-brand d-none d-sm-block">Nightnightcore Automaton</a>
+		<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar-collapse-section"
+						aria-controls="navbar-collapse-section" aria-expanded="false" aria-label="Toggle navigation">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+		<div class="collapse navbar-collapse" id="navbar-collapse-section">
+			<ul class="navbar-nav me-auto mb-2 mb-lg-0">
+				<li class="nav-item">
+					<a href="{{ url_for('list_jobs') }}" class="nav-link">Jobs ({{ job_counts["total"] }})</a>
+				</li>
+				<li class="nav-item">
+					<a href="{{ url_for('queue_status') }}" class="nav-link">
+						Queue ({{ job_counts["queued"] + job_counts["processing"] }})</a>
+				</li>
+			</ul>
+			<div class="d-flex flex-row flex-wrap gap-2">
+				<button onclick="save(this)" class="btn btn-outline-light ps-2"><i class="bi bi-save"></i> Save</button>
+				<a href="{{ url_for('create_job') }}" class="btn btn-outline-light ps-2"><i class="bi bi-plus"></i> New Job</a>
+				<a href="{{ url_for('settings') }}" class="btn btn-outline-light"><i class="bi bi-gear"></i> Settings</a>
+			</div>
+		</div>
+	</div>
+</nav>
+<script src="{{ url_for("navbar_js") }}"></script>

@@ -32,14 +32,14 @@ class JobManager:
 
 			# Create a job queue with preset jobs
 			self._job_queue = JobQueue(Config.get("thread_count"), [self.jobs[job_id] for job_id in save_state.queue])
-			self._job_queue.start_threads()
+			# self._job_queue.start_threads() TODO uncomment
 		# Load a blank state
 		else:
 			# Dict to store all the jobs
 			self.jobs: dict[str, Job] = {}
 			# Create a job queue to manage job rendering
 			self._job_queue = JobQueue(Config.get("thread_count"))
-			self._job_queue.start_threads()
+			# self._job_queue.start_threads()
 
 		atexit.register(self._exit_handler)
 
@@ -82,6 +82,7 @@ class JobManager:
 		"""
 		if job_id in self._job_queue.get_queue_ids():
 			self._job_queue.delete_job(self.jobs[job_id])
+			self.jobs[job_id].status = JobStatus.Waiting
 			return True
 		else:
 			return False

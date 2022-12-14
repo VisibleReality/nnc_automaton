@@ -73,7 +73,8 @@ def list_jobs ():
 
 	jobs = job_manager.get_jobs_with_status(*job_statues)
 
-	return render_template("jobs.html", request_terms = request_terms, job_counts = job_counts, jobs = jobs)
+	return render_template("jobs.html", request_terms = request_terms, job_counts = job_counts, jobs = jobs,
+						   JobStatus = JobStatus)
 
 
 @app.route("/job/<job_id>")
@@ -97,6 +98,38 @@ def get_job_video (job_id: str):
 	return send_file(job_manager.jobs[job_id].get_video_location())
 
 
+@app.route("/job/<job_id>/queue")
+def queue_job (job_id: str):
+	if job_manager.queue_job(job_id):
+		return "true"
+	else:
+		return "false"
+
+
+@app.route("/job/<job_id>/dequeue")
+def dequeue_job (job_id: str):
+	if job_manager.dequeue_job(job_id):
+		return "true"
+	else:
+		return "false"
+
+
+@app.route("/job/<job_id>/delete")
+def delete_job (job_id: str):
+	if job_manager.delete_job(job_id):
+		return "true"
+	else:
+		return "false"
+
+
+@app.route("/job/<job_id>/set_youtube_info")
+def set_youtube_info (job_id: str):
+	if job_manager.jobs[job_id].set_youtube_info("x"):
+		return "true"
+	else:
+		return "false"
+
+
 @app.route("/new-job")
 def create_job ():
 	job_id = job_manager.add_job(Job())
@@ -112,3 +145,15 @@ def create_job ():
 @app.route("/queue")
 def queue_status ():
 	return "Queue"
+
+
+# -- JAVASCRIPT FILES --
+
+@app.route("/js/navbar")
+def navbar_js ():
+	return render_template("navbar.js")
+
+
+@app.route("/js/jobs")
+def jobs_js ():
+	return render_template("jobs.js")
