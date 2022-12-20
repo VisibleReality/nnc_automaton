@@ -69,12 +69,19 @@ def list_jobs ():
 			elif job_type == "failed":
 				job_statues.extend((JobStatus.Failed, JobStatus.Deleted))
 
+	filter_button_types: dict[str, list[str]] = {}
+	for request_term in ("waiting", "queued", "processing", "done", "uploaded", "failed"):
+		if request_term in request_terms:
+			filter_button_types[request_term] = [term for term in request_terms if term != request_term]
+		else:
+			filter_button_types[request_term] = request_terms + [request_term]
+
 	job_counts = job_manager.get_counts()
 
 	jobs = job_manager.get_jobs_with_status(*job_statues)
 
 	return render_template("jobs.html", request_terms = request_terms, job_counts = job_counts, jobs = jobs,
-						   JobStatus = JobStatus)
+						   filter_button_types = filter_button_types, JobStatus = JobStatus)
 
 
 @app.route("/job/<job_id>")
