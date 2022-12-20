@@ -16,91 +16,9 @@
 		</div>
 		<div class="col-12 col-lg-9 order-lg-first">
 			{% for job in jobs.values() %}
-				{% set job_ready = job.check_ready() %}
-				<div class="card mb-1">
-					<div class="row g-0">
-						<div class="col-12 col-md-3 rounded-start"
-								 style="background-image: url('{{ url_for('get_job_image', job_id = job.id) }}');
-										 background-size: cover;
-										 background-position: center">
-							<div class="d-block d-md-none" style="height: 8rem"></div>
-						</div>
-						<div class="col-12 col-md-9">
-							<div class="card-body">
-								{#  Status badges #}
-								{% if job.status == JobStatus.Waiting %}
-									<span class="fs-6 badge text-bg-secondary position-absolute top-0 end-0 mt-2 me-2">
-										<i class="bi bi-info-circle"></i>
-										{{ "Waiting (Ready)" if job_ready else "Waiting" }}
-									</span>
-								{% elif job.status == JobStatus.Queued %}
-									<span class="fs-6 badge text-bg-primary position-absolute top-0 end-0 mt-2 me-2">
-										<i class="bi bi-hourglass"></i> Queued
-									</span>
-								{% elif job.status == JobStatus.AudioProcessing %}
-									<span class="fs-6 badge text-bg-warning position-absolute top-0 end-0 mt-2 me-2">
-										<i class="bi bi-hourglass-split"></i> Audio Processing
-									</span>
-								{% elif job.status == JobStatus.VideoProcessing %}
-									<span class="fs-6 badge text-bg-warning position-absolute top-0 end-0 mt-2 me-2">
-										<i class="bi bi-hourglass-split"></i> Video Processing
-									</span>
-								{% elif job.status == JobStatus.Done %}
-									<span class="fs-6 badge text-bg-success bg-opacity-75 position-absolute top-0 end-0 mt-2 me-2">
-										<i class="bi bi-check-circle"></i> Done
-									</span>
-								{% elif job.status == JobStatus.Uploaded %}
-									<span class="fs-6 badge text-bg-success position-absolute top-0 end-0 mt-2 me-2">
-										<i class="bi bi-upload"></i> Uploaded
-									</span>
-								{% elif job.status == JobStatus.Failed %}
-									<span class="fs-6 badge text-bg-danger position-absolute top-0 end-0 mt-2 me-2">
-										<i class="bi bi-exclamation-triangle"></i> Failed
-									</span>
-								{% elif job.status == JobStatus.Deleted %}
-									<span class="fs-6 badge text-bg-dark position-absolute top-0 end-0 mt-2 me-2">
-										<i class="bi bi-trash"></i> Deleted
-									</span>
-								{% endif %}
-								<h5 class="card-title">{{ job.song_title if job.song_title else "(No name)" }}</h5>
-								<p class="card-text">{{ job.song_artist if job.song_artist else "(No artist)" }}</p>
-								<div class="d-flex flex-row flex-wrap justify-content-end gap-2">
-									<p class="card-text text-muted mt-auto mb-0 me-auto">id: {{ job.id }}</p>
-									<a href="{{ url_for("job_page", job_id = job.id) }}" class="btn btn-secondary">
-										<i class="bi bi-pencil"></i> Edit
-									</a>
-									{% if job.status == JobStatus.Waiting and job_ready %}
-										<button onclick="job_queue(this, '{{ job.id }}')" class="btn btn-primary">
-											<i class="bi bi-arrow-right"></i> Queue
-										</button>
-									{% elif job.status == JobStatus.Failed and job_ready %}
-										<button onclick="job_queue(this, '{{ job.id }}')" class="btn btn-warning">
-											<i class="bi bi-arrow-clockwise"></i> Retry
-										</button>
-									{% elif job.status == JobStatus.Queued %}
-										<button onclick="job_dequeue(this, '{{ job.id }}')" class="btn btn-warning">
-											<i class="bi bi-arrow-left"></i> Dequeue
-										</button>
-									{% elif job.status == JobStatus.Deleted %}
-										<button onclick="job_delete(this, '{{ job.id }}')" class="btn btn-danger">
-											<i class="bi bi-trash"></i> Delete
-										</button>
-									{% elif job.status in (JobStatus.Done, JobStatus.Uploaded) %}
-										<button onclick="job_set_youtube_info(this, '{{ job.id }}')" class="btn btn-primary">
-											<i class="bi bi-youtube"></i> Set YT Data
-										</button>
-										<a href="{{ url_for("get_job_video", job_id = job.id) }}" class="btn btn-success"
-											 download="{{ job.id }}.mp4">
-											<i class="bi bi-download"></i> Download
-										</a>
-									{% endif %}
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
+				{% include "job_card.html" %}
 			{% endfor %}
-		</div>
+			</div>
 	</div>
 </div>
 <script src="{{ url_for('static', filename='bootstrap.bundle.min.js') }}"></script>
