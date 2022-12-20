@@ -13,42 +13,33 @@ function show_checkmark_icon (element) {
 	}
 }
 
-function job_queue (clicked, job_id) {
-	fetch("{{ url_for('queue_job', job_id = 'JOB_ID') }}".replace("JOB_ID", job_id))
+function fetch_then_if_true (url, func, args) {
+	fetch(url)
 		.then(response => response.json())
 		.then(response => {
 			if (response === true) {
-				show_checkmark_icon(clicked.children[0])
+				func(...args)
 			}
-		});
+		})
+}
+
+
+function job_queue (clicked, job_id) {
+	fetch_then_if_true("{{ url_for('queue_job', job_id = 'JOB_ID') }}".replace("JOB_ID", job_id),
+		show_checkmark_icon, [clicked.children[0]]);
 }
 
 function job_dequeue (clicked, job_id) {
-	fetch("{{ url_for('dequeue_job', job_id = 'JOB_ID') }}".replace("JOB_ID", job_id))
-		.then(response => response.json())
-		.then(response => {
-			if (response === true) {
-				show_checkmark_icon(clicked.children[0])
-			}
-		});
+	fetch_then_if_true("{{ url_for('dequeue_job', job_id = 'JOB_ID') }}".replace("JOB_ID", job_id),
+		show_checkmark_icon, [clicked.children[0]]);
 }
 
 function job_delete (clicked, job_id) {
-	fetch("{{ url_for('delete_job', job_id = 'JOB_ID') }}".replace("JOB_ID", job_id))
-		.then(response => response.json())
-		.then(response => {
-			if (response === true) {
-				show_checkmark_icon(clicked.children[0])
-			}
-		});
+	fetch_then_if_true("{{ url_for('delete_job', job_id = 'JOB_ID') }}".replace("JOB_ID", job_id),
+		show_checkmark_icon, [clicked.children[0]]);
 }
 
 function job_set_youtube_info (clicked, job_id) {
-	fetch("{{ url_for('set_youtube_info', job_id = 'JOB_ID') }}".replace("JOB_ID", job_id))
-		.then(response => response.json())
-		.then(response => {
-			if (response === true) {
-				show_checkmark_icon(clicked.children[0])
-			}
-		});
+	fetch_then_if_true("{{ url_for('set_youtube_info', job_id = 'JOB_ID') }}".replace("JOB_ID", job_id),
+		show_checkmark_icon, [clicked.children[0]]);
 }
