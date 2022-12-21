@@ -5,7 +5,6 @@ import flask
 import jsonpickle
 from flask import Flask, render_template, send_file, request, redirect, url_for
 
-import google.oauth2.credentials
 import google_auth_oauthlib.flow
 
 import image_generation
@@ -64,6 +63,8 @@ def google_login ():
 							"scopes":        credentials.scopes}
 
 		Config.set("credentials", credentials_dict)
+
+		Config.set("state", "")
 
 		return flask.redirect(url_for("main_page"))
 

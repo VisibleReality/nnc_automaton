@@ -1,11 +1,17 @@
 import pathlib
 import random
 import string
+from datetime import datetime, timedelta
 from typing import Optional
+
+import google.oauth2.credentials
+import googleapiclient.discovery
 
 import video_generation
 
 from enum import Enum, auto
+
+from config import Config
 
 
 class Job:
@@ -61,7 +67,7 @@ class Job:
 		:return: True if job is ready, False otherwise
 		"""
 		return self.yt_url and self.song_title and self.song_artist and self.speedup_factor and \
-			   pathlib.Path(self.get_image_location()).exists()
+			pathlib.Path(self.get_image_location()).exists()
 
 	def run_job (self) -> None:
 		"""
@@ -88,13 +94,66 @@ class Job:
 		:param publish_time: The time for the video to be published
 		:return: None
 		"""
+		credentials = google.oauth2.credentials.Credentials(**Config.get("credentials"))
+		youtube = googleapiclient.discovery.build("youtube", "v3", credentials = credentials)
+
+		video_id_request = youtube.search().list(
+			part = "snippet",
+			forMine = True,
+			maxResults = 1,
+			q = f'"{self.id}"',
+			type = "video"
+		)
+
+		video_id_response: dict = video_id_request.execute()
+
+		video_id: str = video_id_response["items"][0]["id"]["videoId"]
+
+		next_publish_date = datetime.fromisoformat(Config.get("next_publish_date"))
+
+		get_details_request = youtube.videos().list(
+			part = "status,snippet",
+			id = video_id
+		)
+
+		video_details = get_details_request.execute()
+
+		set_details_request = youtube.videos().update(
+			part = "status,snippet",
+			body = {
+				"id":      video_id,
+				"snippet": {
+					"categoryId":      video_details["items"][0]["snippet"]["categoryId"],
+					"description":     Config.get("description_format").format(title = self.song_title,
+																			   artist = self.song_artist,
+																			   yt_url = self.yt_url),
+					"tags":            video_details["items"][0]["snippet"]["tags"],
+					"title":           Config.get("title_format").format(title = self.song_title,
+																		 artist = self.song_artist)
+				},
+				"status":  {
+					"embeddable":              video_details["items"][0]["status"]["embeddable"],
+					"license":                 video_details["items"][0]["status"]["license"],
+					"privacyStatus":           "private",
+					"publicStatsViewable":     video_details["items"][0]["status"]["publicStatsViewable"],
+					"publishAt":               next_publish_date.isoformat(),
+					"selfDeclaredMadeForKids": video_details["items"][0]["status"]["selfDeclaredMadeForKids"],
+				}
+			}
+		)
+
+		set_details_request.execute()
+
+		next_publish_date += timedelta(hours = Config.get("publish_interval_hours"))
+		Config.set("next_publish_date", next_publish_date.isoformat(timespec = "seconds"))
+
 		self.status = JobStatus.Uploaded
-		return False
+		return True
 
 	def __str__ (self):
 		return f"{self.id} ({self.song_title})"
 
-	def __eq__(self, other):
+	def __eq__ (self, other):
 		"""
 		Checks if the ids of the jobs are equal
 		"""

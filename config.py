@@ -6,17 +6,28 @@ class Config:
 	_config: dict[str, any] = None
 
 	_default_config: dict[str, any] = {
-		"chrome_location": r".\chromium\chrome.exe",
-		"template_url": "https://vizzy.io/editor?project=1fr6ZmEqOSqm4XNFlWJ93",
-		"vizzy_email": "<enter email>",
-		"vizzy_password": "<enter password>",
+		"chrome_location":     r".\chromium\chrome.exe",
+		"template_url":        "https://vizzy.io/editor?project=1fr6ZmEqOSqm4XNFlWJ93",
+		"vizzy_email":         "<enter email>",
+		"vizzy_password":      "<enter password>",
 		"autohotkey_location": r"C:\Program Files\AutoHotkey\AutoHotkeyU64.exe",
 		"openfile_ahk_script": r".\openfile.ahk",
 		"savefile_ahk_script": r".\savefile.ahk",
-		"ffmpeg_location": r".\ffmpeg\bin\ffmpeg.exe",
-		"ffprobe_location": r".\ffmpeg\bin\ffprobe.exe",
-		"thread_count": 2,
-		"savestate_file": r".\savestate.json"
+		"ffmpeg_location":     r".\ffmpeg\bin\ffmpeg.exe",
+		"ffprobe_location":    r".\ffmpeg\bin\ffprobe.exe",
+		"thread_count":        2,
+		"savestate_file":      r".\savestate.json",
+		"state":               "",
+		"credentials":         {},
+		"next_publish_date":   "2023-01-01T00:00:00",
+		"publish_interval_hours": 12,
+		"title_format":        "Nightnightcore - {title} ({artist})",
+		"description_format":  "Make sure to like and subscribe for more daily uploads!\n\n\
+Nightnightcore Remix of {title} by {artist}\n\
+Original Song: {yt_url}\n\n\
+A nightnightcore edit is a remix track that speeds up the pitch and time of nightcore by 10-30% giving it \
+faster tempos, more energetic feel, and higher-pitched vocals\n\n\
+#nightcore"
 	}
 
 	_config_location = "./config.json"
