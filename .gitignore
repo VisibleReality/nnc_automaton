@@ -1,6 +1,7 @@
 /chromedriver.exe
 /config.json
 /savestate.json
+/client_secret.json
 /chromium/
 /data/
 /ffmpeg/
