@@ -1,12 +1,17 @@
 import threading
 import time
 
+import flask
 import jsonpickle
 from flask import Flask, render_template, send_file, request, redirect, url_for
+
+import google.oauth2.credentials
+import google_auth_oauthlib.flow
 
 import image_generation
 from job import Job, JobStatus
 from job_manager import JobManager
+from config import Config
 
 app = Flask(__name__)
 
@@ -36,6 +41,50 @@ def settings ():
 	return "Settings"
 
 
+@app.route("/google-login")
+def google_login ():
+	# noinspection PyGlobalUndefined
+	if "code" in request.args or "error" in request.args:  # After login attempt
+		flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
+			"client_secret.json",
+			scopes = ["https://www.googleapis.com/auth/youtube.force-ssl"],
+			state = Config.get("state")
+		)
+		flow.redirect_uri = "http://localhost:8080/google-login"
+
+		flow.fetch_token(code = request.args["code"])
+
+		credentials = flow.credentials
+
+		credentials_dict = {"token":         credentials.token,
+							"refresh_token": credentials.refresh_token,
+							"token_uri":     credentials.token_uri,
+							"client_id":     credentials.client_id,
+							"client_secret": credentials.client_secret,
+							"scopes":        credentials.scopes}
+
+		Config.set("credentials", credentials_dict)
+
+		return flask.redirect(url_for("main_page"))
+
+	else:
+		flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
+			"client_secret.json",
+			scopes = ["https://www.googleapis.com/auth/youtube.force-ssl"]
+		)
+
+		flow.redirect_uri = "http://localhost:8080/google-login"
+
+		authorization_url, state = flow.authorization_url(
+			access_type = "offline",
+			include_granted_scopes = "true"
+		)
+
+		Config.set("state", state)
+
+		return flask.redirect(authorization_url)
+
+
 @app.route("/favicon.ico")
 def favicon ():
 	return send_file("./nightnightcore.ico")
@@ -55,6 +104,8 @@ def list_jobs ():
 	request_terms: list[str] = []
 	if "types" in request.args:
 		request_terms = request.args["types"].split(",")
+		if request_terms == [""]:
+			request_terms = []
 		for job_type in request_terms:
 			if job_type == "waiting":
 				job_statues.append(JobStatus.Waiting)
