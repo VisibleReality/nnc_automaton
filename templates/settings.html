@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Settings | Nightnightcore Automaton</title>
+	<link rel="stylesheet" href="{{ url_for('static', filename='bootstrap.min.css') }}">
+	<link rel="stylesheet" href="{{ url_for('static', filename='bootstrap-icons.css') }}">
+</head>
+<body>
+{% include "navbar.html" %}
+<div class="container mt-2 mb-5">
+	{% if file_upload_success is not none %}
+		<div class="row g-2 mb-2">
+			<div class="col-12">
+				{% if file_upload_success %}
+					<div class="alert alert-success mb-0">
+						Config uploaded successfully!
+					</div>
+				{% else %}
+					<div class="alert alert-danger mb-0">
+						Config failed to upload.
+					</div>
+				{% endif %}
+			</div>
+		</div>
+	{% endif %}
+	{% if google_login_success is not none %}
+		<div class="row g-2 mb-2">
+			<div class="col-12">
+				{% if google_login_success %}
+					<div class="alert alert-success mb-0">
+						Logged in to Google successfully!
+					</div>
+				{% else %}
+					<div class="alert alert-danger mb-0">
+						Failed to login to Google.
+					</div>
+				{% endif %}
+			</div>
+		</div>
+	{% endif %}
+	<div class="row g-2">
+		<div class="col-lg-4 col-md-6 col-12">
+			<div class="card">
+				<div class="card-header">
+					Download config.json
+				</div>
+				<div class="card-body">
+					<a href="{{ url_for("download_config") }}" class="btn btn-primary" download="config.json">
+						<i class="bi bi-download"></i> Download
+					</a>
+				</div>
+			</div>
+		</div>
+		<div class="col-lg-4 col-md-6 col-12">
+			<div class="card">
+				<div class="card-header">
+					Upload config.json
+				</div>
+				<div class="card-body">
+					<form method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
+						<div class="mb-2">
+							<label for="config-file" class="form-label">Select the file to upload</label>
+							<input class="form-control" type="file" id="config-file" name="config-file"
+										 accept="application/json,.json" required>
+							<div class="invalid-feedback">
+								Please select a file
+							</div>
+						</div>
+						<button type="submit" class="btn btn-primary">
+							<i class="bi bi-upload"></i> Upload
+						</button>
+					</form>
+				</div>
+			</div>
+		</div>
+		<div class="col-lg-4 col-md-6 col-12">
+			<div class="card">
+				<div class="card-header">
+					Login to Google
+				</div>
+				<div class="card-body">
+					<div class="mb-2">For technical reasons, this must be done on localhost:8080</div>
+					<a href="{{ url_for("google_login") }}" class="btn btn-primary" id="google-login">
+						<i class="bi bi-google"></i> Login with Google
+					</a>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<script src="{{ url_for('settings_js') }}"></script>
+<script src="{{ url_for('static', filename='bootstrap.bundle.min.js') }}"></script>
+</body>
+</html>

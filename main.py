@@ -35,15 +35,46 @@ def main_page ():
 	return render_template("index.html", job_counts = job_counts)
 
 
-@app.route("/settings")
+@app.route("/settings", methods = ["GET", "POST"])
 def settings ():
-	return "Settings"
+	file_upload_success = None
+	google_login_success = None
+
+	# Config file uploaded
+	if request.method == "POST" and "config-file" in request.files:
+		config_file = request.files["config-file"]
+
+		if not config_file.filename.endswith(".json"):
+			file_upload_success = False
+		else:
+			# noinspection PyBroadException
+			try:
+				config_file.save("config.json")
+				Config.reload_config()
+				file_upload_success = True
+			except Exception:
+				file_upload_success = False
+
+	if "google_login_success" in request.args:
+		if request.args["google_login_success"] == "true":
+			google_login_success = True
+		else:
+			google_login_success = False
+
+	job_counts = job_manager.get_counts()
+
+	return render_template("settings.html", job_counts = job_counts, file_upload_success = file_upload_success,
+						   google_login_success = google_login_success)
+
+
+@app.route("/settings/download")
+def download_config ():
+	return send_file("config.json", as_attachment = True)
 
 
 @app.route("/google-login")
 def google_login ():
-	# noinspection PyGlobalUndefined
-	if "code" in request.args or "error" in request.args:  # After login attempt
+	if "code" in request.args:  # After login attempt, success
 		flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
 			"client_secret.json",
 			scopes = ["https://www.googleapis.com/auth/youtube.force-ssl"],
@@ -66,9 +97,12 @@ def google_login ():
 
 		Config.set("state", "")
 
-		return flask.redirect(url_for("main_page"))
+		return flask.redirect(url_for("settings", google_login_success = "true"))
 
-	else:
+	elif "error" in request.args:  # After login attempt, failure
+		return flask.redirect(url_for("settings", google_login_success = "false"))
+
+	else:  # Before login attempt
 		flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
 			"client_secret.json",
 			scopes = ["https://www.googleapis.com/auth/youtube.force-ssl"]
@@ -149,12 +183,12 @@ def get_job_image (job_id: str):
 
 @app.route("/job/<job_id>/audio")
 def get_job_audio (job_id: str):
-	return send_file(job_manager.jobs[job_id].get_audio_location())
+	return send_file(job_manager.jobs[job_id].get_audio_location(), as_attachment = True)
 
 
 @app.route("/job/<job_id>/video")
 def get_job_video (job_id: str):
-	return send_file(job_manager.jobs[job_id].get_video_location())
+	return send_file(job_manager.jobs[job_id].get_video_location(), as_attachment = True)
 
 
 @app.route("/job/<job_id>/queue")
@@ -216,3 +250,8 @@ def navbar_js ():
 @app.route("/js/jobs")
 def jobs_js ():
 	return render_template("jobs.js")
+
+
+@app.route("/js/settings")
+def settings_js ():
+	return render_template("settings.js")
