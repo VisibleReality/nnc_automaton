@@ -25,21 +25,28 @@ class JobManager:
 			# Dict to store all the jobs
 			self.jobs: dict[str, Job] = save_state.jobs
 
+			# Create a job queue
+			self._job_queue = JobQueue(Config.get("thread_count"))
+
 			# Search for in-progress jobs and add to the start of the queue
 			for job in self.jobs.values():
 				if job.status in (JobStatus.AudioProcessing, JobStatus.VideoProcessing):
-					save_state.queue.insert(0, job.id)
+					job.status = JobStatus.Waiting
+					self.queue_job(job.id)
 
-			# Create a job queue with preset jobs
-			self._job_queue = JobQueue(Config.get("thread_count"), [self.jobs[job_id] for job_id in save_state.queue])
-			# self._job_queue.start_threads() TODO uncomment
+			# Queue the remaining jobs
+			for job_id in save_state.queue:
+				self.jobs[job_id].status = JobStatus.Waiting
+				self.queue_job(job_id)
+
+		# self._job_queue.start_threads() TODO uncomment
 		# Load a blank state
 		else:
 			# Dict to store all the jobs
 			self.jobs: dict[str, Job] = {}
 			# Create a job queue to manage job rendering
 			self._job_queue = JobQueue(Config.get("thread_count"))
-			# self._job_queue.start_threads()
+		# self._job_queue.start_threads()
 
 		atexit.register(self._exit_handler)
 
@@ -98,6 +105,16 @@ class JobManager:
 		else:
 			return self.jobs
 
+	def get_queue (self) -> list[Job]:
+		"""
+		Gets all jobs in the queue, including the ones currently in progress (at the start)
+		This is a copy of the queue, modifying it will not modify the queue
+		:return: A list of all jobs in the queue
+		"""
+		in_progress = [job for job in self.jobs.values() if job.status in
+					   (JobStatus.AudioProcessing, JobStatus.VideoProcessing)]
+		return in_progress + [self.jobs[job_id] for job_id in self._job_queue.get_queue_ids()]
+
 	def queue_job (self, job_id: str) -> bool:
 		"""
 		Queue a job given its id
@@ -140,7 +157,7 @@ class JobManager:
 				"waiting":    len(self.get_jobs_with_status(JobStatus.Waiting)),
 				"queued":     len(self.get_jobs_with_status(JobStatus.Queued)),
 				"processing": len(self.get_jobs_with_status(JobStatus.AudioProcessing,
-																   JobStatus.VideoProcessing)),
+															JobStatus.VideoProcessing)),
 				"done":       len(self.get_jobs_with_status(JobStatus.Done)),
 				"uploaded":   len(self.get_jobs_with_status(JobStatus.Uploaded)),
 				"failed":     len(self.get_jobs_with_status(JobStatus.Failed, JobStatus.Deleted))}

@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Queue | Nightnightcore Automaton</title>
+	<link rel="stylesheet" href="{{ url_for('static', filename='bootstrap.min.css') }}">
+	<link rel="stylesheet" href="{{ url_for('static', filename='bootstrap-icons.css') }}">
+</head>
+<body>
+{% include "navbar.html" %}
+<div class="container mt-2 mb-5">
+	<table class="w-100" style="table-layout: auto">
+		{% for job in queue %}
+			<tr>
+				<td>
+					<div class="h5 text-end me-2 mb-0">
+						{{ loop.index }}
+					</div>
+				</td>
+				<td style="width: 100%">
+					{% include "job_card.html" %}
+				</td>
+			</tr>
+		{% endfor %}
+	</table>
+</div>
+<script src="{{ url_for('static', filename='bootstrap.bundle.min.js') }}"></script>
+</body>
+</html>

@@ -53,7 +53,7 @@
 					</a>
 					{% if job.status == JobStatus.Waiting and job_ready %}
 						<button onclick="job_queue(this, '{{ job.id }}')" class="btn btn-primary">
-							<i class="bi bi-arrow-right"></i> Queue
+							<i class="bi bi-box-arrow-in-right"></i> Queue
 						</button>
 					{% elif job.status == JobStatus.Failed and job_ready %}
 						<button onclick="job_queue(this, '{{ job.id }}')" class="btn btn-warning">
@@ -61,7 +61,7 @@
 						</button>
 					{% elif job.status == JobStatus.Queued %}
 						<button onclick="job_dequeue(this, '{{ job.id }}')" class="btn btn-warning">
-							<i class="bi bi-arrow-left"></i> Dequeue
+							<i class="bi bi-box-arrow-right"></i> Dequeue
 						</button>
 					{% elif job.status in (JobStatus.Done, JobStatus.Uploaded) %}
 						{% if job.status == JobStatus.Done %}

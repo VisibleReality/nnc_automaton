@@ -237,7 +237,11 @@ def create_job ():
 
 @app.route("/queue")
 def queue_status ():
-	return "Queue"
+	job_counts = job_manager.get_counts()
+
+	queue = job_manager.get_queue()
+
+	return render_template("queue.html", job_counts = job_counts, queue = queue, JobStatus = JobStatus)
 
 
 # -- JAVASCRIPT FILES --
