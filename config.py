@@ -65,7 +65,11 @@ faster tempos, more energetic feel, and higher-pitched vocals\n\n\
 		"""
 		if Config._config is None:
 			Config.reload_config()
-		return Config._config.get(name, Config._default_config.get(name))
+
+		if name not in Config._config:
+			Config.set(name, Config._default_config[name])  # Write the defaults to the config file if uninitialised
+
+		return Config._config[name]
 
 	@staticmethod
 	def set (name: str, value: any) -> None:
