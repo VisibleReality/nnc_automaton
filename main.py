@@ -199,6 +199,12 @@ def queue_job (job_id: str):
 		return "false"
 
 
+@app.route("/job/queue-all")
+def queue_all_ready ():
+	job_manager.queue_all_ready_waiting()
+	return "true"
+
+
 @app.route("/job/<job_id>/dequeue")
 def dequeue_job (job_id: str):
 	if job_manager.dequeue_job(job_id):
@@ -217,7 +223,21 @@ def delete_job (job_id: str):
 
 @app.route("/job/<job_id>/set_youtube_info")
 def set_youtube_info (job_id: str):
-	if job_manager.jobs[job_id].set_youtube_info("x"):
+	if job_manager.jobs[job_id].set_youtube_info():
+		return "true"
+	else:
+		return "false"
+
+
+@app.route("/job/set_youtube_info_all")
+def set_youtube_info_all ():
+	any_failures = False
+	for job in job_manager.jobs.values():
+		if job.status == JobStatus.Done:
+			if not job.set_youtube_info():
+				any_failures = True
+
+	if not any_failures:
 		return "true"
 	else:
 		return "false"

@@ -12,7 +12,7 @@
 <div class="container mt-2 mb-5">
 	<div class="row g-3">
 		<div class="col-12 col-lg-3 order-lg-last">
-			<div class="d-flex flex-row flex-wrap gap-1">
+			<div class="d-flex flex-row flex-wrap gap-2 mb-3">
 				<a href="{{ url_for(request.endpoint, types = ','.join(filter_button_types['waiting'])) }}"
 					 class="btn btn-secondary flex-grow-1 text-start">
 					<i class="bi {{ 'bi-square' if 'waiting' in filter_button_types['waiting'] else 'bi-check-square' }} me-1"></i>
@@ -43,6 +43,14 @@
 					<i class="bi {{ 'bi-square' if 'failed' in filter_button_types['failed'] else 'bi-check-square' }} me-1"></i>
 					<i class="bi bi-exclamation-triangle"></i> Failed
 				</a>
+			</div>
+			<div class="d-flex flex-row flex-wrap gap-2">
+				<button onclick="job_queue_all(this)" class="btn btn-primary flex-grow-1 text-start">
+					<i class="bi bi-box-arrow-in-right"></i> Queue All Ready
+				</button>
+				<button onclick="job_set_youtube_info_all(this)" class="btn btn-primary flex-grow-1 text-start">
+					<i class="bi bi-youtube"></i> Set YT Data All
+				</button>
 			</div>
 		</div>
 		<div class="col-12 col-lg-9 order-lg-first">

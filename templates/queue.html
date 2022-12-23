@@ -13,12 +13,12 @@
 	<table class="w-100" style="table-layout: auto">
 		{% for job in queue %}
 			<tr>
-				<td>
+				<td class="p-0">
 					<div class="h5 text-end me-2 mb-0">
 						{{ loop.index }}
 					</div>
 				</td>
-				<td style="width: 100%">
+				<td class="p-0" style="width: 100%">
 					{% include "job_card.html" %}
 				</td>
 			</tr>

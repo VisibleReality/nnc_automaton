@@ -88,7 +88,7 @@ class Job:
 
 		self.status = JobStatus.Done
 
-	def set_youtube_info (self, publish_time) -> bool:
+	def set_youtube_info (self) -> bool:
 		"""
 		Sets the video name, description, and publish time of the video on YouTube
 		:param publish_time: The time for the video to be published
