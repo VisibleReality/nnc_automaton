@@ -11,6 +11,15 @@
 {% include "navbar.html" %}
 <div class="container mt-2 mb-5">
 	{% set job_ready = job.check_ready() %}
+	{% if job.failure_info %}
+		<div class="row g-2 mb-2">
+			<div class="col-12">
+					<div class="alert alert-danger mb-0">
+						Job failed: {{ job.failure_info }}
+					</div>
+			</div>
+		</div>
+	{% endif %}
 	<form method="post" action="{{ url_for(request.endpoint, job_id = job.id) }}" enctype="multipart/form-data"
 				class="needs-validation" novalidate>
 		<div class="row g-3">
