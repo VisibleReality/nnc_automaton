@@ -107,29 +107,29 @@
 				<div class="d-flex flex-row flex-wrap justify-content-end gap-2">
 					<p class="card-text text-muted mt-auto mb-0 me-auto">id: {{ job.id }}</p>
 					{% if job.status == JobStatus.Waiting and job_ready %}
-						<button onclick="job_queue(this, '{{ job.id }}')" class="btn btn-primary">
+						<button onclick="job_queue(this, '{{ job.id }}')" class="btn btn-primary" type="button">
 							<i class="bi bi-box-arrow-in-right"></i> Queue
 						</button>
 					{% elif job.status == JobStatus.Failed and job_ready %}
-						<button onclick="job_queue(this, '{{ job.id }}')" class="btn btn-warning">
+						<button onclick="job_queue(this, '{{ job.id }}')" class="btn btn-warning" type="button">
 							<i class="bi bi-arrow-clockwise"></i> Retry
 						</button>
 					{% elif job.status == JobStatus.Queued %}
-						<button onclick="job_dequeue(this, '{{ job.id }}')" class="btn btn-warning">
+						<button onclick="job_dequeue(this, '{{ job.id }}')" class="btn btn-warning" type="button">
 							<i class="bi bi-box-arrow-right"></i> Dequeue
 						</button>
 					{% elif job.status in (JobStatus.Done, JobStatus.Uploaded) %}
 						{% if job.status == JobStatus.Done %}
-							<button onclick="job_set_youtube_info(this, '{{ job.id }}')" class="btn btn-primary">
+							<button onclick="job_set_youtube_info(this, '{{ job.id }}')" class="btn btn-primary" type="button">
 								<i class="bi bi-youtube"></i> Set YT Data
 							</button>
 						{% endif %}
-						<a href="{{ url_for("get_job_video", job_id = job.id) }}" class="btn btn-success"
+						<a href="{{ url_for("get_job_video", job_id = job.id) }}" class="btn btn-success" type="button"
 							 download="{{ job.id }}.mp4">
 							<i class="bi bi-download"></i> Download
 						</a>
 					{% endif %}
-					<button onclick="job_delete(this, '{{ job.id }}')" class="btn btn-danger">
+					<button onclick="job_delete(this, '{{ job.id }}')" class="btn btn-danger" type="button">
 						<i class="bi bi-trash"></i> Delete
 					</button>
 					<button class="btn btn-success" type="submit" name="submit-type" value="save">
