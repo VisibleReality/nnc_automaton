@@ -14,7 +14,9 @@ from config import Config
 
 app = Flask(__name__)
 
-job_manager = JobManager(True)
+debug = app.config["DEBUG"]
+
+job_manager = JobManager(True, debug)
 
 
 # Start up a thread that saves the state every 30 minutes
@@ -23,7 +25,8 @@ def save_timer ():
 	job_manager.save_state()
 
 
-threading.Thread(target = save_timer, daemon = True)
+if not debug:
+	threading.Thread(target = save_timer, daemon = True)
 
 
 # -- MISC --

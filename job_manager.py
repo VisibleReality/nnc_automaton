@@ -11,7 +11,7 @@ from custom_exceptions import IdAlreadyUsedException
 
 
 class JobManager:
-	def __init__ (self, load_state: bool = False):
+	def __init__ (self, load_state: bool = False, debug: bool = False):
 		"""
 		Create a new job manager, which should manage all the jobs for the application
 		:param load_state: Set to true to load state from disk
@@ -47,9 +47,10 @@ class JobManager:
 			self._job_queue = JobQueue(Config.get("thread_count"))
 
 		# Start the processing threads
-		self._job_queue.start_threads()
+		if not debug:
+			self._job_queue.start_threads()
 
-		atexit.register(self._exit_handler)
+			atexit.register(self._exit_handler)
 
 	def _exit_handler (self):
 		# When using the debug server don't autosave state
