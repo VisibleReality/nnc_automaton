@@ -170,10 +170,28 @@ def list_jobs ():
 						   filter_button_types = filter_button_types, JobStatus = JobStatus)
 
 
-@app.route("/job/<job_id>")
+@app.route("/job/<job_id>", methods = ["GET", "POST"])
 def job_page (job_id: str):
 	job = job_manager.jobs[job_id]
-	return jsonpickle.encode(job)
+
+	if request.method == "POST":
+		job.song_title = request.form["song-title"]
+		job.song_artist = request.form["song-artist"]
+		job.yt_url = request.form["yt-url"]
+		job.speedup_factor = float(request.form["speedup-factor"])
+
+		if request.form["submit-type"] == "new-image":
+			try:
+				image_generation.get_random_image_from_web(job_manager.jobs[job_id].get_image_location())
+			except Exception as exception:
+				print(exception)
+
+		if "job-image" in request.files and request.files["job-image"].filename != "":
+			request.files["job-image"].save(job.get_image_location())
+
+	job_counts = job_manager.get_counts()
+
+	return render_template("job.html", job_counts = job_counts, job = job, JobStatus = JobStatus)
 
 
 @app.route("/job/<job_id>/image")

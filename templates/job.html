@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>{{ job.song_title if job.song_title else "(No name)" }} | Nightnightcore Automaton</title>
+	<link rel="stylesheet" href="{{ url_for('static', filename='bootstrap.min.css') }}">
+	<link rel="stylesheet" href="{{ url_for('static', filename='bootstrap-icons.css') }}">
+</head>
+<body>
+{% include "navbar.html" %}
+<div class="container mt-2 mb-5">
+	{% set job_ready = job.check_ready() %}
+	<form method="post" action="{{ url_for(request.endpoint, job_id = job.id) }}" enctype="multipart/form-data"
+				class="needs-validation" novalidate>
+		<div class="row g-3">
+			<div class="col-12 col-lg-5 order-lg-last">
+				<div class="card">
+					{#  Status badges #}
+					{% if job.status == JobStatus.Waiting %}
+						<span class="fs-6 badge text-bg-secondary position-absolute top-0 end-0 mt-2 me-2">
+										<i class="bi bi-info-circle"></i>
+										{{ "Waiting (Ready)" if job_ready else "Waiting" }}
+									</span>
+					{% elif job.status == JobStatus.Queued %}
+						<span class="fs-6 badge text-bg-primary position-absolute top-0 end-0 mt-2 me-2">
+										<i class="bi bi-hourglass"></i> Queued
+									</span>
+					{% elif job.status == JobStatus.AudioProcessing %}
+						<span class="fs-6 badge text-bg-warning position-absolute top-0 end-0 mt-2 me-2">
+										<i class="bi bi-hourglass-split"></i> Audio Processing
+									</span>
+					{% elif job.status == JobStatus.VideoProcessing %}
+						<span class="fs-6 badge text-bg-warning position-absolute top-0 end-0 mt-2 me-2">
+										<i class="bi bi-hourglass-split"></i> Video Processing
+									</span>
+					{% elif job.status == JobStatus.Done %}
+						<span class="fs-6 badge text-bg-success bg-opacity-75 position-absolute top-0 end-0 mt-2 me-2">
+										<i class="bi bi-check-circle"></i> Done
+									</span>
+					{% elif job.status == JobStatus.Uploaded %}
+						<span class="fs-6 badge text-bg-success position-absolute top-0 end-0 mt-2 me-2">
+										<i class="bi bi-upload"></i> Uploaded
+									</span>
+					{% elif job.status == JobStatus.Failed %}
+						<span class="fs-6 badge text-bg-danger position-absolute top-0 end-0 mt-2 me-2">
+										<i class="bi bi-exclamation-triangle"></i> Failed
+									</span>
+					{% elif job.status == JobStatus.Deleted %}
+						<span class="fs-6 badge text-bg-dark position-absolute top-0 end-0 mt-2 me-2">
+										<i class="bi bi-trash"></i> Deleted
+									</span>
+					{% endif %}
+					<img src="{{ url_for('get_job_image', job_id = job.id) }}" alt="Image for {{ job.song_title }}"
+							 class="card-img-top img-fluid" id="job-image-preview">
+					<div class="card-body">
+						<div class="mb-2">
+							<label for="job-image" class="form-label">Upload a custom image:</label>
+							<input class="form-control" type="file" id="job-image" name="job-image"
+										 accept="image/jpeg,.jpg,.jpeg" onchange="update_image(this, 'job-image-preview')">
+						</div>
+						<label for="new-image" class="form-label">Or get a new random image:</label>
+						<div class="d-flex flex-row flex-wrap justify-content-start">
+							<button class="btn btn-secondary" type="submit" id="new-image" name="submit-type" value="new-image">
+								<i class="bi bi-card-image"></i> New random image
+							</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="col-12 col-lg-7 order-lg-first">
+				<div class="mb-3">
+					<label for="song-title" class="form-label">Song Title</label>
+					<input type="text" name="song-title" id="song-title" class="form-control" placeholder="(No name)"
+								 value="{{ job.song_title }}">
+				</div>
+				<div class="mb-3">
+					<label for="song-artist" class="form-label">Song Artist</label>
+					<input type="text" name="song-artist" id="song-artist" class="form-control" placeholder="(No artist)"
+								 value="{{ job.song_artist }}">
+				</div>
+				<div class="mb-3">
+					<label for="yt-url" class="form-label">YouTube Link</label>
+					<input type="url" name="yt-url" id="yt-url" class="form-control" placeholder="https://youtube.com/watch?v=..."
+								 value="{{ job.yt_url }}">
+					<div class="invalid-feedback">
+						Please insert a valid URL
+					</div>
+				</div>
+				<div class="mb-3">
+					<label for="speedup-factor" class="form-label">Speedup Factor</label>
+					<input type="number" name="speedup-factor" id="speedup-factor" class="form-control" placeholder="1.8225"
+								 step="any" value="{{ job.speedup_factor }}" required>
+					<div class="invalid-feedback">
+						Please insert a number
+					</div>
+				</div>
+				<div class="d-flex flex-row flex-wrap justify-content-end gap-2">
+					<p class="card-text text-muted mt-auto mb-0 me-auto">id: {{ job.id }}</p>
+					{% if job.status == JobStatus.Waiting and job_ready %}
+						<button onclick="job_queue(this, '{{ job.id }}')" class="btn btn-primary">
+							<i class="bi bi-box-arrow-in-right"></i> Queue
+						</button>
+					{% elif job.status == JobStatus.Failed and job_ready %}
+						<button onclick="job_queue(this, '{{ job.id }}')" class="btn btn-warning">
+							<i class="bi bi-arrow-clockwise"></i> Retry
+						</button>
+					{% elif job.status == JobStatus.Queued %}
+						<button onclick="job_dequeue(this, '{{ job.id }}')" class="btn btn-warning">
+							<i class="bi bi-box-arrow-right"></i> Dequeue
+						</button>
+					{% elif job.status in (JobStatus.Done, JobStatus.Uploaded) %}
+						{% if job.status == JobStatus.Done %}
+							<button onclick="job_set_youtube_info(this, '{{ job.id }}')" class="btn btn-primary">
+								<i class="bi bi-youtube"></i> Set YT Data
+							</button>
+						{% endif %}
+						<a href="{{ url_for("get_job_video", job_id = job.id) }}" class="btn btn-success"
+							 download="{{ job.id }}.mp4">
+							<i class="bi bi-download"></i> Download
+						</a>
+					{% endif %}
+					<button onclick="job_delete(this, '{{ job.id }}')" class="btn btn-danger">
+						<i class="bi bi-trash"></i> Delete
+					</button>
+					<button class="btn btn-success" type="submit" name="submit-type" value="save">
+						<i class="bi bi-save"></i> Save
+					</button>
+				</div>
+			</div>
+		</div>
+	</form>
+</div>
+<script src="{{ url_for('jobs_js') }}"></script>
+<script src="{{ url_for('static', filename='bootstrap.bundle.min.js') }}"></script>
+</body>
+</html>

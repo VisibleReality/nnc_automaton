@@ -59,7 +59,8 @@
 					Upload config.json
 				</div>
 				<div class="card-body">
-					<form method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
+					<form method="post" action="{{ url_for(request.endpoint) }}" enctype="multipart/form-data"
+								class="needs-validation" novalidate>
 						<div class="mb-2">
 							<label for="config-file" class="form-label">Select the file to upload</label>
 							<input class="form-control" type="file" id="config-file" name="config-file"

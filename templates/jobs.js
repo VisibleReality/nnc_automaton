@@ -53,3 +53,30 @@ function job_set_youtube_info_all (clicked, job_id) {
 	fetch_then_if_true("{{ url_for('set_youtube_info_all') }}",
 		show_checkmark_icon, [clicked.children[0]]);
 }
+
+function update_image(source, image_id) {
+	var selectedFile = source.files[0];
+	console.log(selectedFile)
+	var img = document.getElementById(image_id);
+
+	var reader = new FileReader();
+	reader.onload = (e) => {
+		console.log(e.target.result)
+		img.src = e.target.result;
+	}
+
+	reader.readAsDataURL(selectedFile)
+}
+
+const forms = document.querySelectorAll('.needs-validation');
+
+Array.from(forms).forEach(form => {
+	form.addEventListener('submit', event => {
+		if (!form.checkValidity()) {
+			event.preventDefault();
+			event.stopPropagation();
+		}
+
+		form.classList.add("was-validated");
+	}, false);
+});
