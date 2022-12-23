@@ -18,12 +18,12 @@ job_manager = JobManager(True)
 
 
 # Start up a thread that saves the state every 30 minutes
-# def save_timer ():
-# 	time.sleep(1800)
-# 	job_manager.save_state()
-#
-#
-# threading.Thread(target = save_timer, daemon = True)
+def save_timer ():
+	time.sleep(1800)
+	job_manager.save_state()
+
+
+threading.Thread(target = save_timer, daemon = True)
 
 
 # -- MISC --

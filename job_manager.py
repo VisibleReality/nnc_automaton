@@ -39,21 +39,21 @@ class JobManager:
 				self.jobs[job_id].status = JobStatus.Waiting
 				self.queue_job(job_id)
 
-		# self._job_queue.start_threads() TODO uncomment
 		# Load a blank state
 		else:
 			# Dict to store all the jobs
 			self.jobs: dict[str, Job] = {}
 			# Create a job queue to manage job rendering
 			self._job_queue = JobQueue(Config.get("thread_count"))
-		# self._job_queue.start_threads()
+
+		# Start the processing threads
+		self._job_queue.start_threads()
 
 		atexit.register(self._exit_handler)
 
 	def _exit_handler (self):
 		# When using the debug server don't autosave state
-		# self.save_state()
-		pass
+		self.save_state()
 
 	def add_job (self, new_job: Job) -> str:
 		"""
