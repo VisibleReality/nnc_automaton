@@ -30,7 +30,7 @@ class Job:
 		self.speedup_factor = speedup_factor
 		self.song_title = song_title
 		self.song_artist = song_artist
-		self.progress_percentage = ""
+		self.progress_percentage = "0%"
 		self.failure_info: Optional[str] = None
 
 	def get_audio_location (self) -> str:
