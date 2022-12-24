@@ -30,6 +30,7 @@ class Job:
 		self.speedup_factor = speedup_factor
 		self.song_title = song_title
 		self.song_artist = song_artist
+		self.progress_percentage = ""
 		self.failure_info: Optional[str] = None
 
 	def get_audio_location (self) -> str:
@@ -84,14 +85,14 @@ class Job:
 										image_location = self.get_image_location(),
 										save_location = self.get_video_location(),
 										song_title = self.song_title,
-										song_artist = self.song_artist)
+										song_artist = self.song_artist,
+										progress_callback = self._set_progress)
 
 		self.status = JobStatus.Done
 
 	def set_youtube_info (self) -> bool:
 		"""
 		Sets the video name, description, and publish time of the video on YouTube
-		:param publish_time: The time for the video to be published
 		:return: None
 		"""
 		credentials = google.oauth2.credentials.Credentials(**Config.get("credentials"))
@@ -149,6 +150,9 @@ class Job:
 
 		self.status = JobStatus.Uploaded
 		return True
+
+	def _set_progress(self, progress: str) -> None:
+		self.progress_percentage = progress
 
 	def __str__ (self):
 		return f"{self.id} ({self.song_title})"

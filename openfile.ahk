@@ -3,6 +3,8 @@
 SendMode Input  ; Recommended for new scripts due to its superior speed and reliability.
 SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
 
+Sleep 500 ; script seems to be a little inconsistent, hopefully this helps fix it
+
 WinWait Open ahk_exe chrome.exe
 WinActivate
 ControlSetText Edit1, %1%

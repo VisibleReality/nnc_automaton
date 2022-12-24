@@ -2,6 +2,7 @@ import subprocess
 import os
 import threading
 import time
+from typing import Callable, Any
 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -53,7 +54,7 @@ def generate_audio (*, yt_url: str, speedup_factor: float = 1.8225, output_locat
 
 
 def generate_video (*, song_title: str, song_artist: str, audio_location: str, image_location: str,
-		save_location: str) -> None:
+		save_location: str, progress_callback: Callable[[str], Any] = lambda _: None) -> None:
 	"""
 	Given a set of parameters, generates a music visualiser video using vizzy.io
 	:param song_title: The name of the song that will appear in the video
@@ -61,6 +62,7 @@ def generate_video (*, song_title: str, song_artist: str, audio_location: str, i
 	:param audio_location: The absolute path to an audio file that will be used as the audio of the video
 	:param image_location: The absolute path to an image that will be used as the background of the video
 	:param save_location: The absolute path the resulting video will be saved to
+	:param progress_callback: A function which will be called with the progress text to update the job's project
 	:return: None
 	"""
 	browser = webdriver.Chrome(options = options)
@@ -149,6 +151,12 @@ def generate_video (*, song_title: str, song_artist: str, audio_location: str, i
 	# Select Export from the menu
 	browser.find_element(By.XPATH, '//li[@id="export"]').click()
 
+	# Delete advertisement, to make sure the progress percentage is on screen
+	browser.execute_script("""
+var element = arguments[0];
+element.parentNode.removeChild(element);
+""", browser.find_element(By.XPATH, '//*[@id="root"]/div/div/div[1]/div'))
+
 	# Show advanced settings
 	browser.find_element(By.XPATH, '//p[text()="Show advanced settings"]').click()
 
@@ -167,11 +175,13 @@ def generate_video (*, song_title: str, song_artist: str, audio_location: str, i
 	# Wait for export to start
 	while (progress_text := browser.find_element(By.XPATH, '//*[@id="root"]/div/div/div[2]/div[2]/div[2]/h6').text) \
 			== "0%":
+		progress_callback(progress_text)
 		time.sleep(2)
 
 	# Wait for export to finish
 	while (progress_text := browser.find_element(By.XPATH, '//*[@id="root"]/div/div/div[2]/div[2]/div[2]/h6').text) \
 			!= "0%":
+		progress_callback(progress_text)
 		time.sleep(2)
 
 	# Wait a little longer

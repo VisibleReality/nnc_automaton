@@ -25,7 +25,7 @@
 									</span>
 				{% elif job.status == JobStatus.VideoProcessing %}
 					<span class="fs-6 badge text-bg-warning position-absolute top-0 end-0 mt-2 me-2">
-										<i class="bi bi-hourglass-split"></i> Video Processing
+										<i class="bi bi-hourglass-split"></i> Video Processing ({{ job.progress_percentage }})
 									</span>
 				{% elif job.status == JobStatus.Done %}
 					<span class="fs-6 badge text-bg-success bg-opacity-75 position-absolute top-0 end-0 mt-2 me-2">
