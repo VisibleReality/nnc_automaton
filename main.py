@@ -19,9 +19,9 @@ debug = app.config["DEBUG"]
 job_manager = JobManager(True, debug)
 
 
-# Start up a thread that saves the state every 30 minutes
+# Start up a thread that saves the state every x minutes
 def save_timer ():
-	time.sleep(1800)
+	time.sleep(Config.get("autosave_interval_mins") * 60)
 	job_manager.save_state()
 
 
