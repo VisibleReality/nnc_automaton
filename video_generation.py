@@ -75,14 +75,17 @@ def generate_video (*, song_title: str, song_artist: str, audio_location: str, i
 	wait.until(expected_conditions.invisibility_of_element_located((By.XPATH, '//*[@id="root"]/div[1]/div')))
 
 	# Dismiss cookie banner
+	wait.until(expected_conditions.element_to_be_clickable((By.CLASS_NAME, "cc-nb-reject")))
 	browser.find_element(By.CLASS_NAME, "cc-nb-reject").click()
 
 	# -- VIDEO CUSTOMISATION --
 
 	# Set resolution to 1080p
+	wait.until(expected_conditions.element_to_be_clickable((By.XPATH, '//span[text()="1080"]')))
 	browser.find_element(By.XPATH, '//span[text()="1080"]').click()
 
 	# Select image
+	wait.until(expected_conditions.element_to_be_clickable((By.XPATH, '//span[text()="Image Background"]')))
 	browser.find_element(By.XPATH, '//span[text()="Image Background"]').click()
 
 	# Get the source of the image element, so we can tell when it changes later
@@ -95,6 +98,7 @@ def generate_video (*, song_title: str, song_artist: str, audio_location: str, i
 	wait.until(expected_conditions.invisibility_of_element_located((By.XPATH, f'//img[@src="{image_src}"]')))
 
 	# Select song title
+	wait.until(expected_conditions.element_to_be_clickable((By.XPATH, '//span[text()="Song Title"]')))
 	browser.find_element(By.XPATH, '//span[text()="Song Title"]').click()
 
 	# Fill song title
@@ -104,6 +108,7 @@ def generate_video (*, song_title: str, song_artist: str, audio_location: str, i
 	song_title_element.send_keys(song_title)
 
 	# Select song artist
+	wait.until(expected_conditions.element_to_be_clickable((By.XPATH, '//span[text()="Artist Name"]')))
 	browser.find_element(By.XPATH, '//span[text()="Artist Name"]').click()
 
 	# Fill song artist
@@ -115,6 +120,7 @@ def generate_video (*, song_title: str, song_artist: str, audio_location: str, i
 	# -- SIGN IN --
 
 	# Click sign in button
+	wait.until(expected_conditions.element_to_be_clickable((By.XPATH, '//span[text()="Sign in"]')))
 	browser.find_element(By.XPATH, '//span[text()="Sign in"]').click()
 
 	# Fill email
@@ -124,6 +130,7 @@ def generate_video (*, song_title: str, song_artist: str, audio_location: str, i
 	browser.find_element(By.XPATH, '//input[@name="password"]').send_keys(Config.get("vizzy_password"))
 
 	# Click submit button
+	wait.until(expected_conditions.element_to_be_clickable((By.XPATH, '//span[text()="Sign In"]')))
 	browser.find_element(By.XPATH, '//span[text()="Sign In"]').click()
 
 	# Wait until signed-in
@@ -134,6 +141,7 @@ def generate_video (*, song_title: str, song_artist: str, audio_location: str, i
 	# Only allow one thread to open a dialog box at a time
 	with ahk_lock:
 		# Click on select audio button
+		wait.until(expected_conditions.element_to_be_clickable((By.XPATH, '//span[text()="Choose audio"]')))
 		browser.find_element(By.XPATH, '//span[text()="Choose audio"]').click()
 
 		# Select audio file
@@ -146,9 +154,11 @@ def generate_video (*, song_title: str, song_artist: str, audio_location: str, i
 	# -- EXPORT --
 
 	# Select File from the menu bar
+	wait.until(expected_conditions.element_to_be_clickable((By.XPATH, '//span[text()="File"]')))
 	browser.find_element(By.XPATH, '//span[text()="File"]').click()
 
 	# Select Export from the menu
+	wait.until(expected_conditions.element_to_be_clickable((By.XPATH, '//li[@id="export"]')))
 	browser.find_element(By.XPATH, '//li[@id="export"]').click()
 
 	# Delete advertisement, to make sure the progress percentage is on screen
@@ -158,6 +168,7 @@ element.parentNode.removeChild(element);
 """, browser.find_element(By.XPATH, '//*[@id="root"]/div/div/div[1]/div'))
 
 	# Show advanced settings
+	wait.until(expected_conditions.element_to_be_clickable((By.XPATH, '//p[text()="Show advanced settings"]')))
 	browser.find_element(By.XPATH, '//p[text()="Show advanced settings"]').click()
 
 	# Use file system
@@ -167,6 +178,7 @@ element.parentNode.removeChild(element);
 	# Only allow one thread to open a dialog box at a time
 	with ahk_lock:
 		# Start export
+		wait.until(expected_conditions.element_to_be_clickable((By.XPATH, '//span[text()="Start export"]')))
 		browser.find_element(By.XPATH, '//span[text()="Start export"]').click()
 
 		# Select export location
