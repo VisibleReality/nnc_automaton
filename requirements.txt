@@ -11,4 +11,4 @@ oauthlib~=3.2.2
 requests~=2.28.1
 selenium~=4.7.2
 waitress~=2.1.2
-yt-dlp~=2022.11.11
+yt-dlp>=2023.09.24
