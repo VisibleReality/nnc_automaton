@@ -148,8 +148,8 @@ def generate_video (*, song_title: str, song_artist: str, audio_location: str, i
 		subprocess.call([Config.get("autohotkey_location"), Config.get("openfile_ahk_script"), audio_location])
 
 	# Wait until audio finishes processing
-	wait.until(expected_conditions.visibility_of_element_located((By.XPATH, '//span[text()="Analyzing audio..."]')))
-	wait.until(expected_conditions.invisibility_of_element_located((By.XPATH, '//span[text()="Analyzing audio..."]')))
+	wait.until(expected_conditions.visibility_of_element_located((By.XPATH, '//h4[text()="Analyzing audio..."]')))
+	wait.until(expected_conditions.invisibility_of_element_located((By.XPATH, '//h4[text()="Analyzing audio..."]')))
 
 	# -- EXPORT --
 
