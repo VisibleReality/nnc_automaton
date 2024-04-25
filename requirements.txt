@@ -1,4 +1,4 @@
-Flask~=2.2.2
+Flask~=3.0.3
 google-api-core~=2.11.0
 google-api-python-client~=2.70.0
 google-auth-httplib2~=0.1.0
@@ -11,4 +11,4 @@ oauthlib~=3.2.2
 requests>=2.31.0
 selenium~=4.7.2
 waitress~=2.1.2
-yt-dlp>=2023.09.24
+yt-dlp>=2024.4.9
