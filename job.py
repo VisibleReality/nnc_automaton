@@ -137,7 +137,7 @@ class Job:
 					"license":                 video_details["items"][0]["status"]["license"],
 					"privacyStatus":           "private",
 					"publicStatsViewable":     video_details["items"][0]["status"]["publicStatsViewable"],
-					"publishAt":               next_publish_date.isoformat(),
+					"publishAt":               f"{next_publish_date.isoformat()}Z",
 					"selfDeclaredMadeForKids": video_details["items"][0]["status"]["selfDeclaredMadeForKids"],
 				}
 			}
