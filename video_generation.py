@@ -154,12 +154,16 @@ def generate_video (*, song_title: str, song_artist: str, audio_location: str, i
 	# -- EXPORT --
 
 	# Select File from the menu bar
-	wait.until(expected_conditions.element_to_be_clickable((By.XPATH, '//span[text()="File"]')))
-	browser.find_element(By.XPATH, '//span[text()="File"]').click()
+	wait.until(expected_conditions.element_to_be_clickable((By.XPATH, '//*[@id="file-menu-button"]')))
+	browser.find_element(By.XPATH, '//*[@id="file-menu-button"]').click()
 
 	# Select Export from the menu
-	wait.until(expected_conditions.element_to_be_clickable((By.XPATH, '//li[@id="export"]')))
-	browser.find_element(By.XPATH, '//li[@id="export"]').click()
+	wait.until(expected_conditions.element_to_be_clickable((By.XPATH, '//*[@id="export"]')))
+	browser.find_element(By.XPATH, '//*[@id="export"]').click()
+
+	# Dismiss Export info screen
+	wait.until(expected_conditions.element_to_be_clickable((By.XPATH, '//*[@id="root"]/div/div/div[2]/button')))
+	browser.find_element(By.XPATH, '//*[@id="root"]/div/div/div[2]/button').click()
 
 	# Delete advertisement, to make sure the progress percentage is on screen
 	browser.execute_script("""
@@ -201,3 +205,10 @@ element.parentNode.removeChild(element);
 
 	# Quit
 	browser.quit()
+
+
+if __name__ == "__main__":
+	generate_video(song_title = "Radioactive", song_artist = "Imagine Dragons",
+				   save_location = r"C:\Users\ajdmi\PycharmProjects\nnc_automaton\data\ubebdrroei.mp4",
+				   audio_location = r"C:\Users\ajdmi\PycharmProjects\nnc_automaton\data\ubebdrroei.mp3",
+				   image_location = r"C:\Users\ajdmi\PycharmProjects\nnc_automaton\data\ubebdrroei.jpg")
