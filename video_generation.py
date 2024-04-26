@@ -68,6 +68,8 @@ def generate_video (*, song_title: str, song_artist: str, audio_location: str, i
 	browser = webdriver.Chrome(options = options)
 	wait = WebDriverWait(browser, 20)
 
+	browser.set_window_size(1583, 1013)
+
 	# Load page with template
 	browser.get(Config.get("template_url"))
 
@@ -208,7 +210,7 @@ element.parentNode.removeChild(element);
 
 
 if __name__ == "__main__":
-	generate_video(song_title = "Radioactive", song_artist = "Imagine Dragons",
+	generate_video(song_title = "Test Title", song_artist = "Test Artist", progress_callback = print,
 				   save_location = r"C:\Users\ajdmi\PycharmProjects\nnc_automaton\data\ubebdrroei.mp4",
 				   audio_location = r"C:\Users\ajdmi\PycharmProjects\nnc_automaton\data\ubebdrroei.mp3",
 				   image_location = r"C:\Users\ajdmi\PycharmProjects\nnc_automaton\data\ubebdrroei.jpg")
