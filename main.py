@@ -21,8 +21,10 @@ job_manager = JobManager(True, debug)
 
 # Start up a thread that saves the state every x minutes
 def save_timer ():
-	time.sleep(Config.get("autosave_interval_mins") * 60)
-	job_manager.save_state()
+	print(f"Autosaving every {Config.get('autosave_interval_mins')} minutes.")
+	while True:
+		time.sleep(Config.get("autosave_interval_mins") * 60)
+		job_manager.save_state()
 
 
 if not debug:
