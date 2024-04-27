@@ -28,8 +28,10 @@ def save_timer ():
 
 
 if not debug:
-	threading.Thread(target = save_timer, daemon = True)
-
+	print("Production Mode")
+	threading.Thread(target = save_timer, daemon = True).start()
+else:
+	print("Debug Mode")
 
 # -- MISC --
 
