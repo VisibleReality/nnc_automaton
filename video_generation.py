@@ -35,7 +35,8 @@ def generate_audio (*, yt_url: str, speedup_factor: float = 1.8225, output_locat
 		# Download audio
 		ytdl_options = {
 			"format":  "bestaudio",
-			"outtmpl": f"{output_location}.temp.webm"
+			"outtmpl": f"{output_location}.temp.webm",
+			"sponsorblock-remove": "all"
 		}
 		with YoutubeDL(ytdl_options) as ytdl:
 			ytdl.download([yt_url])
