@@ -10,5 +10,5 @@ lxml~=4.9.2
 oauthlib~=3.2.2
 requests>=2.31.0
 selenium~=4.7.2
-waitress~=2.1.2
+waitress>=3.0.1
 yt-dlp>=2024.4.9
